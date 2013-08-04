@@ -14,21 +14,21 @@ close = (connection) ->
 amqp.on 'ready', () ->
   amqp.queue 'potato', {passive: false, durable: true}, (queue) ->
     console.log 'ready to play, connecting to the server'
-    ws.connect 'ws://hotpotatofb.nodejitsu.com', 'papacaliente-client'
+    ws.connect 'ws://localhost:3000', 'papacaliente-client'
     ws.on 'connect', (connection) ->
       connection.on 'message', (message) ->
         console.log 'connected, waiting for the potato'
         connection.sendUTF JSON.stringify {action: 'insert', id: process.argv[2]}
       queue.subscribe (m) ->
         m = m.data.toString()
-        console.log 'got the potato! ->', m
-        connection.sendUTF JSON.stringify {action: 'potato', id: process.argv[2]}
-        setTimeout () ->
+        console.log 'got the potato! press enter to push it back'
+        process.stdin.on 'data', (data) ->
+          connection.sendUTF JSON.stringify {action: 'potato', id: process.argv[2]}
           amqp.publish 'potato', m
-        , 100, amqp, m
+
 
       connection.on 'close', () ->
-        close(connection)
+        process.exit(1)
       amqp.on 'error', () ->
         close(connection)
       process.on 'SIGINT', () ->

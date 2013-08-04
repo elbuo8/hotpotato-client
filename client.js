@@ -32,7 +32,7 @@
       durable: true
     }, function(queue) {
       console.log('ready to play, connecting to the server');
-      ws.connect('ws://hotpotatofb.nodejitsu.com', 'papacaliente-client');
+      ws.connect('ws://localhost:3000', 'papacaliente-client');
       return ws.on('connect', function(connection) {
         connection.on('message', function(message) {
           console.log('connected, waiting for the potato');
@@ -43,17 +43,17 @@
         });
         queue.subscribe(function(m) {
           m = m.data.toString();
-          console.log('got the potato! ->', m);
-          connection.sendUTF(JSON.stringify({
-            action: 'potato',
-            id: process.argv[2]
-          }));
-          return setTimeout(function() {
+          console.log('got the potato! press enter to push it back');
+          return process.stdin.on('data', function(data) {
+            connection.sendUTF(JSON.stringify({
+              action: 'potato',
+              id: process.argv[2]
+            }));
             return amqp.publish('potato', m);
-          }, 100, amqp, m);
+          });
         });
         connection.on('close', function() {
-          return close(connection);
+          return process.exit(1);
         });
         amqp.on('error', function() {
           return close(connection);
