@@ -14,7 +14,7 @@ close = (connection) ->
 amqp.on 'ready', () ->
   amqp.queue 'potato', {passive: false, durable: true}, (queue) ->
     console.log 'ready to play, connecting to the server'
-    ws.connect 'ws://localhost:5000', 'papacaliente-client'
+    ws.connect 'ws://hotpotatofb.nodejitsu.com:', 'papacaliente-client'
     ws.on 'connect', (connection) ->
       connection.on 'message', (message) ->
         console.log 'connected, waiting for the potato'

@@ -32,7 +32,7 @@
       durable: true
     }, function(queue) {
       console.log('ready to play, connecting to the server');
-      ws.connect('ws://localhost:5000', 'papacaliente-client');
+      ws.connect('ws://hotpotatofb.nodejitsu.com:', 'papacaliente-client');
       return ws.on('connect', function(connection) {
         connection.on('message', function(message) {
           console.log('connected, waiting for the potato');
