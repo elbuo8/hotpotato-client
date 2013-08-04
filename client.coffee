@@ -14,7 +14,7 @@ close = (connection) ->
 amqp.on 'ready', () ->
   amqp.queue 'potato', {passive: false, durable: true}, (queue) ->
     console.log 'ready to play, connecting to the server'
-    ws.connect 'ws://hotpotatofb.nodejitsu.com:', 'papacaliente-client'
+    ws.connect 'ws://hotpotatofb.nodejitsu.com', 'papacaliente-client'
     ws.on 'connect', (connection) ->
       connection.on 'message', (message) ->
         console.log 'connected, waiting for the potato'
@@ -25,7 +25,7 @@ amqp.on 'ready', () ->
         connection.sendUTF JSON.stringify {action: 'potato', id: process.argv[2]}
         setTimeout () ->
           amqp.publish 'potato', m
-        , 300, amqp, m
+        , 100, amqp, m
 
       connection.on 'close', () ->
         close(connection)
